@@ -4,7 +4,7 @@ class Rental
   def person=(person)
     person.rentals.push(self) unless person.rentals.include?(self)
   end
-  
+
   def book=(book)
     book.rentals.push(self) unless book.rentals.include?(self)
   end
