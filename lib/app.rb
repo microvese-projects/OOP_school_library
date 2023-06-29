@@ -4,17 +4,36 @@ require_relative 'book'
 require_relative 'rental'
 
 class App
+  attr_accessor :books, :people
+
   def initialize
     @books = []
     @people = []
   end
 
   def list_books
-    puts @books
+    puts 'No books in the library!' if @books.empty?
+    @books.each do |book|
+      result = "Title: \"#{book.title.capitalize}\" "
+      result += "Author: #{book.author.capitalize}"
+      puts result
+    end
   end
 
   def list_people
-    puts @people
+    puts 'No people registered!' if @people.empty?
+    @people.each do |person|
+      result = '['
+      result += person.class.name
+      result += '] '
+      result += 'Name: '
+      result += person.name.capitalize
+      result += ' ID: '
+      result += person.id.to_s
+      result += ' Age: '
+      result += person.age
+      puts result
+    end
   end
 
   def create_student(age, classroom, name = 'Unknown', parent_permission: true)
