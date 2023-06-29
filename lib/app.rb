@@ -23,15 +23,10 @@ class App
   def list_people
     puts 'No people registered!' if @people.empty?
     @people.each do |person|
-      result = '['
-      result += person.class.name
-      result += '] '
-      result += 'Name: '
-      result += person.name.capitalize
-      result += ' ID: '
-      result += person.id.to_s
-      result += ' Age: '
-      result += person.age
+      result += "[#{person.class.name}] "
+      result += "Name: #{person.name.capitalize}, "
+      result += "ID: #{person.id.to_s}, "
+      result += "Age: #{person.age}"
       puts result
     end
   end
