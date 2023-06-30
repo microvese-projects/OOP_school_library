@@ -162,7 +162,7 @@ def check_selection(num, app)
   if action
     action.call(app)
   elsif num == '7'
-    puts 'Exited!'
+    puts 'Thank you for using this app!'
     return
   else
     puts 'You must enter a valid number!'
