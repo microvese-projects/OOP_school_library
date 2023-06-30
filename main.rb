@@ -7,8 +7,7 @@ def age
   age = gets.chomp
   if age == ''
     puts 'Age cannot be blank'
-    print 'Age: '
-    age = gets.chomp
+    age()
   end
   age
 end
@@ -22,7 +21,12 @@ end
 
 def date
   print 'Date (yy/mm/dd): '
-  gets.chomp
+  date = gets.chomp
+  if date == ''
+    puts 'A date is required!'
+    date()
+  end
+  date
 end
 
 def permission
@@ -56,6 +60,16 @@ def create_person(app)
     start(app)
   end
   puts 'Person created succesfully'
+end
+
+def create_book(app)
+  print 'Title: '
+  title = gets.chomp
+  print 'Author: '
+  author = gets.chomp
+
+  app.create_book(title, author)
+  puts 'Book created succesfully'
 end
 
 def display_persons(persons)
@@ -101,6 +115,13 @@ def start_rental(app)
   end
 end
 
+def display_rentals (app)
+  print "ID of person: "
+  id = gets.chomp.to_i
+  app.list_person_rentals(id)
+  start(app)
+end
+
 def start(app = App.new())
   puts ' '
   puts '1 - List all books'
@@ -130,17 +151,13 @@ def check_selection(num, app)
     create_person(app)
     start(app)
   when '4' # create book
-    print 'Title: '
-    title = gets.chomp
-    print 'Author: '
-    author = gets.chomp
-
-    app.create_book(title, author)
-    puts 'Book created succesfully'
+    create_book(app)
     start(app)
   when '5' # create rental
     start_rental(app)
     start(app)
+  when '6' # List persons rentals
+    display_rentals(app)
   when '7' || /exit/i # exit app
     puts 'Exited!'
   else # Enter a valid number
