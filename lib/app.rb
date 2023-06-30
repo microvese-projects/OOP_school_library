@@ -52,7 +52,17 @@ class App
 
   def list_person_rentals(id)
     @people.each do |person|
-      puts person.rentals if person.id == id
+      if person.id == id
+        puts 'Rentals: '
+        person.rentals.each do |rental|
+          result = "Date: #{rental.date}, "
+          result += "Book: \"#{rental.book.title.capitalize}\" "
+          result += "by #{rental.book.author.capitalize}"
+          puts result
+        end
+      else
+        'No person with that ID!'
+      end
     end
   end
 end
