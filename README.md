@@ -100,9 +100,9 @@ Install this project with:
 
 ### Usage
 
-To run the project, start the irb interactive platform:
+To interact with the app, run the executable file with the command below on the terminal:
 ```sh
-  irb
+  main.rb
 ```
 -
 
