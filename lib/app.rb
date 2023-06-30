@@ -2,8 +2,11 @@ require_relative 'student'
 require_relative 'teacher'
 require_relative 'book'
 require_relative 'rental'
+require_relative './modules/user_data'
 
 class App
+  include User
+
   attr_accessor :books, :people
 
   def initialize
@@ -11,19 +14,23 @@ class App
     @people = []
   end
 
-  def list_books
-    puts 'No books in the library!' if @books.empty?
-    @books.each do |book|
-      result = "Title: \"#{book.title.capitalize}\" "
+  def list_books(rent: false)
+    puts 'No books in the library!' if @books.empty? && !rent
+    @books.each_with_index do |book, index|
+      result = ''
+      result += "#{index}) " if rent
+      result += "Title: \"#{book.title.capitalize}\" "
       result += "Author: #{book.author.capitalize}"
       puts result
     end
   end
 
-  def list_people
+  def list_people(rent: false)
     puts 'No people registered!' if @people.empty?
-    @people.each do |person|
-      result = "[#{person.class.name}] "
+    @people.each_with_index do |person, index|
+      result = ''
+      result = "#{index}) " if rent
+      result += "[#{person.class.name}] "
       result += "Name: #{person.name.capitalize}, "
       result += "ID: #{person.id}, "
       result += "Age: #{person.age}"
@@ -31,26 +38,68 @@ class App
     end
   end
 
-  def create_student(age, classroom, name = 'Unknown', parent_permission: true)
-    student = Student.new(age, classroom, name, parent_permission: parent_permission)
-    @people.push(student)
+  def create_person
+    print 'Do you want to create a student (1) or a teacher (2)? [Input the number]: '
+    person = gets.chomp
+    if person == '1' # create student
+      age = age()
+      name = name()
+      permission = permission()
+
+      student = Student.new(age, nil, name, parent_permission: permission)
+      @people.push(student)
+    elsif person == '2' # create teacher
+      age = age()
+      name = name()
+      specialization = specialization()
+
+      teacher = Teacher.new(age, specialization, name)
+      @people.push(teacher)
+    else
+      puts 'You need to select an actual number'
+      return
+    end
+    puts 'Person created succesfully'
   end
 
-  def create_teacher(age, specialization, name = 'Unknown')
-    teacher = Teacher.new(age, specialization, name)
-    @people.push(teacher)
-  end
+  def create_book
+    print 'Title: '
+    title = gets.chomp
+    print 'Author: '
+    author = gets.chomp
 
-  def create_book(title, author)
     book = Book.new(title, author)
     @books.push(book)
+    puts 'Book created succesfully'
   end
 
-  def create_a_rental(date, book, person)
-    Rental.new(date, book, person)
+  def create_a_rental
+    books = @books
+    persons = @people
+    if books.empty? && persons.empty?
+      puts 'Ensure you have books in library and people registered!'
+    else
+      puts 'Select a book from the following list by number'
+      list_books(rent: true)
+
+      book_index = gets.chomp.to_i
+
+      puts 'Select a person from the following list by numnber (not id)'
+      list_people(rent: true)
+
+      person_index = gets.chomp.to_i
+
+      date = date()
+
+      Rental.new(date, @books[book_index], @people[person_index])
+      puts 'Rental created succesfully!'
+    end
   end
 
-  def list_person_rentals(id)
+  def list_person_rentals
+    print 'ID of person: '
+    id = gets.chomp.to_i
+
     @people.each do |person|
       if person.id == id
         puts 'Rentals: '
