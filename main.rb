@@ -7,7 +7,7 @@ def age
   age = gets.chomp
   if age == ''
     puts 'Age cannot be blank'
-    age()
+    age
   end
   age
 end
@@ -24,7 +24,7 @@ def date
   date = gets.chomp
   if date == ''
     puts 'A date is required!'
-    date()
+    date
   end
   date
 end
@@ -77,7 +77,7 @@ def display_persons(persons)
     result = "#{index}) "
     result += "[#{person.class.name}] "
     result += "Name: #{person.name.capitalize}, "
-    result += "ID: #{person.id.to_s}, "
+    result += "ID: #{person.id}, "
     result += "Age: #{person.age}"
     puts result
   end
@@ -96,33 +96,43 @@ def start_rental(app)
   books = app.books
   persons = app.people
   if books.empty? && persons.empty?
-    puts 'Ensure you have books in library and people registered!' 
+    puts 'Ensure you have books in library and people registered!'
   else
     puts 'Select a book from the following list by number'
     display_books(books)
-    
+
     book_index = gets.chomp.to_i
-    
+
     puts 'Select a person from the following list by numnber (not id)'
     display_persons(persons)
-    
+
     person_index = gets.chomp.to_i
-    
+
     date = date()
-    
+
     app.create_a_rental(date, app.books[book_index], app.people[person_index])
     puts 'Rental created succesfully!'
   end
 end
 
-def display_rentals (app)
-  print "ID of person: "
+def display_rentals(app)
+  print 'ID of person: '
   id = gets.chomp.to_i
   app.list_person_rentals(id)
   start(app)
 end
 
+def list_books(app)
+  app.list_books
+end
+
+def list_people(app)
+  app.list_people
+end
+
 def start(app = App.new())
+  puts ' '
+  puts 'Please choose an option by enterin a number: '
   puts ' '
   puts '1 - List all books'
   puts '2 - List all people'
@@ -133,37 +143,32 @@ def start(app = App.new())
   puts '7 - exit'
   puts ' '
 
-  puts 'Please choose an option by enterin a number: '
   selection = gets.chomp
 
   check_selection(selection, app)
 end
 
 def check_selection(num, app)
-  case num
-  when '1' # list books
-    app.list_books
-    start(app)
-  when '2' # list people
-    app.list_people
-    start(app)
-  when '3' # create a person
-    create_person(app)
-    start(app)
-  when '4' # create book
-    create_book(app)
-    start(app)
-  when '5' # create rental
-    start_rental(app)
-    start(app)
-  when '6' # List persons rentals
-    display_rentals(app)
-  when '7' || /exit/i # exit app
+  menu_options = {
+    '1' => method(:list_books),
+    '2' => method(:list_people),
+    '3' => method(:create_person),
+    '4' => method(:create_book),
+    '5' => method(:start_rental),
+    '6' => method(:display_rentals)
+  }
+
+  action = menu_options[num]
+  if action
+    action.call(app)
+  elsif num == '7'
     puts 'Exited!'
-  else # Enter a valid number
+    return
+  else
     puts 'You must enter a valid number!'
-    start(app)
   end
+
+  start(app)
 end
 
 def main

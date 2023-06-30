@@ -25,7 +25,7 @@ class App
     @people.each do |person|
       result = "[#{person.class.name}] "
       result += "Name: #{person.name.capitalize}, "
-      result += "ID: #{person.id.to_s}, "
+      result += "ID: #{person.id}, "
       result += "Age: #{person.age}"
       puts result
     end
@@ -56,8 +56,8 @@ class App
         puts 'Rentals: '
         person.rentals.each do |rental|
           result = "Date: #{rental.date}, "
-          result += "Book: \"#{rental.book.title.capitalize}\" "
-          result += "by #{rental.book.author.capitalize}"
+          result += "Book: \"#{rental.rented.title.capitalize}\" "
+          result += "by #{rental.rented.author.capitalize}"
           puts result
         end
       else
