@@ -2,7 +2,7 @@ require_relative 'student'
 require_relative 'teacher'
 require_relative 'book'
 require_relative 'rental'
-require_relative './modules/user_data'
+require_relative 'modules/user_data'
 
 class App
   include User
