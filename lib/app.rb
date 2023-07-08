@@ -3,15 +3,18 @@ require_relative 'teacher'
 require_relative 'book'
 require_relative 'rental'
 require_relative 'modules/user_data'
+require_relative 'modules/save'
 
 class App
   include User
+  include Save
 
   attr_accessor :books, :people
 
   def initialize
     @books = []
     @people = []
+    @rentals = []
   end
 
   def list_books(rent: false)
@@ -91,7 +94,7 @@ class App
 
       date = date()
 
-      Rental.new(date, @books[book_index], @people[person_index])
+      @rentals << Rental.new(date, @books[book_index], @people[person_index])
       puts 'Rental created succesfully!'
     end
   end
@@ -113,5 +116,11 @@ class App
         'No person with that ID!'
       end
     end
+  end
+
+  def quit
+    save_books(@books)
+    save_people(@people)
+    save_rentals(@rentals)
   end
 end
