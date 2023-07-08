@@ -5,9 +5,9 @@ class Person < Nameable
   attr_accessor :name, :age
   attr_reader :id, :rentals
 
-  def initialize(age, name = 'Unknown', parent_permission: true)
-    @id = Random.rand(1..1000)
-    @name = name
+  def initialize(age, name, id, parent_permission: true)
+    @id = id || Random.rand(1..1000)
+    @name = name || 'Unknown'
     @age = age
     @parent_permission = parent_permission
     @rentals = []

@@ -3,18 +3,25 @@ require_relative 'teacher'
 require_relative 'book'
 require_relative 'rental'
 require_relative 'modules/user_data'
+require_relative 'modules/save'
+require_relative 'modules/load_data'
 
 class App
   include User
+  include Save
+  include Load
 
   attr_accessor :books, :people
 
   def initialize
-    @books = []
-    @people = []
+    @books = load_books
+    @people = load_people
+    @rentals = load_rentals
   end
 
   def list_books(rent: false)
+    puts '|---------LIST OF BOOKS-----------|'
+    puts ' '
     puts 'No books in the library!' if @books.empty? && !rent
     @books.each_with_index do |book, index|
       result = ''
@@ -26,6 +33,8 @@ class App
   end
 
   def list_people(rent: false)
+    puts '|---------LIST OF PEOPLE-----------|'
+    puts ' '
     puts 'No people registered!' if @people.empty?
     @people.each_with_index do |person, index|
       result = ''
@@ -42,19 +51,17 @@ class App
     print 'Do you want to create a student (1) or a teacher (2)? [Input the number]: '
     person = gets.chomp
     if person == '1' # create student
+      puts "|---------CREATE STUDENT-----------|\n\n"
       age = age()
       name = name()
       permission = permission()
-
-      student = Student.new(age, nil, name, parent_permission: permission)
-      @people.push(student)
+      @people << Student.new(age, nil, name, nil, parent_permission: permission)
     elsif person == '2' # create teacher
+      puts "|---------CREATE TEACHER-----------|\n\n"
       age = age()
       name = name()
       specialization = specialization()
-
-      teacher = Teacher.new(age, specialization, name)
-      @people.push(teacher)
+      @people << Teacher.new(age, specialization, name, nil)
     else
       puts 'You need to select an actual number'
       return
@@ -63,6 +70,7 @@ class App
   end
 
   def create_book
+    puts "|---------CREATE A BOOK-----------|\n\n"
     print 'Title: '
     title = gets.chomp
     print 'Author: '
@@ -77,7 +85,8 @@ class App
     books = @books
     persons = @people
     if books.empty? && persons.empty?
-      puts 'Ensure you have books in library and people registered!'
+      puts '|-----------------------RENTALS---------------------------|'
+      puts '  Ensure you have books in library and people registered!  '
     else
       puts 'Select a book from the following list by number'
       list_books(rent: true)
@@ -91,27 +100,38 @@ class App
 
       date = date()
 
-      Rental.new(date, @books[book_index], @people[person_index])
+      @rentals << Rental.new(date, @books[book_index], @people[person_index])
       puts 'Rental created succesfully!'
     end
   end
 
   def list_person_rentals
+    list_people
     print 'ID of person: '
     id = gets.chomp.to_i
 
-    @people.each do |person|
-      if person.id == id
-        puts 'Rentals: '
-        person.rentals.each do |rental|
-          result = "Date: #{rental.date}, "
-          result += "Book: \"#{rental.rented.title.capitalize}\" "
-          result += "by #{rental.rented.author.capitalize}"
-          puts result
-        end
-      else
-        'No person with that ID!'
+    person = @people.select { |each| each.id == id }[0]
+    puts person
+
+    if person
+      puts "\n|------------RENTALS ID: #{id}----------|"
+      puts '  Rentals: '
+      person.rentals.each do |rental|
+        result = "Date: #{rental.date}, "
+        result += "Book: \"#{rental.book.title.capitalize}\" "
+        result += "by #{rental.book.author.capitalize}"
+        puts result
       end
+    else
+      puts '|-----------OOPS!------------|'
+      puts "  No person with id: #{id}!  "
+      puts '|-----------OOPS!------------|'
     end
+  end
+
+  def quit
+    save_books(@books)
+    save_people(@people)
+    save_rentals(@rentals)
   end
 end
