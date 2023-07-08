@@ -58,27 +58,24 @@ module Save
   end
 
   def rental_obj(rental)
-    if rental.person.class == 'Student'
-      return {
+    if rental.person.instance_of?(Student)
+      {
         date: rental.date,
         book: {
           title: rental.book.title,
-          author: rental.book.author,
-          rentals: rental.book.rentals
+          author: rental.book.author
         },
         person: obj_student(rental.person)
       }
     else
-      return {
+      {
         date: rental.date,
         book: {
           title: rental.book.title,
-          author: rental.book.author,
-          rentals: rental.book.rentals
+          author: rental.book.author
         },
         person: obj_teacher(rental.person)
       }
     end
   end
-
 end

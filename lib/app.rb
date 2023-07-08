@@ -51,23 +51,17 @@ class App
     print 'Do you want to create a student (1) or a teacher (2)? [Input the number]: '
     person = gets.chomp
     if person == '1' # create student
-      puts '|---------CREATE STUDENT-----------|'
-      puts ' '
+      puts "|---------CREATE STUDENT-----------|\n\n"
       age = age()
       name = name()
       permission = permission()
-
-      student = Student.new(age, nil, name, nil, parent_permission: permission)
-      @people.push(student)
+      @people << Student.new(age, nil, name, nil, parent_permission: permission)
     elsif person == '2' # create teacher
-      puts '|---------CREATE TEACHER-----------|'
-      puts ' '
+      puts "|---------CREATE TEACHER-----------|\n\n"
       age = age()
       name = name()
       specialization = specialization()
-
-      teacher = Teacher.new(age, specialization, name, nil)
-      @people.push(teacher)
+      @people << Teacher.new(age, specialization, name, nil)
     else
       puts 'You need to select an actual number'
       return
@@ -76,8 +70,7 @@ class App
   end
 
   def create_book
-    puts '|---------CREATE A BOOK-----------|'
-    puts ' '
+    puts "|---------CREATE A BOOK-----------|\n\n"
     print 'Title: '
     title = gets.chomp
     print 'Author: '
@@ -117,18 +110,22 @@ class App
     print 'ID of person: '
     id = gets.chomp.to_i
 
-    @people.each_with_index do |person, index|
-      if person.id == id
-        puts ' '
-        puts "|------------RENTALS ID: #{id}----------|"
-        puts '  Rentals: '
-        person.rentals.each do |rental|
-          result = "Date: #{rental.date}, "
-          result += "Book: \"#{rental.rented.title.capitalize}\" "
-          result += "by #{rental.rented.author.capitalize}"
-          puts result
-        end
+    person = @people.select { |each| each.id == id }[0]
+    puts person
+
+    if person
+      puts "\n|------------RENTALS ID: #{id}----------|"
+      puts '  Rentals: '
+      person.rentals.each do |rental|
+        result = "Date: #{rental.date}, "
+        result += "Book: \"#{rental.book.title.capitalize}\" "
+        result += "by #{rental.book.author.capitalize}"
+        puts result
       end
+    else
+      puts '|-----------OOPS!------------|'
+      puts "  No person with id: #{id}!  "
+      puts '|-----------OOPS!------------|'
     end
   end
 

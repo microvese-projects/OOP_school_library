@@ -7,7 +7,7 @@ require_relative '../rental'
 module Load
   def load_books
     return [] if File.exist?('files/books.json') == false
-  
+
     new_arr = []
     file = File.read('files/books.json')
     file_data = JSON.parse(file)
@@ -16,10 +16,10 @@ module Load
     end
     new_arr
   end
-  
+
   def load_people
     return [] if File.exist?('files/people.json') == false
-  
+
     new_arr = []
     file = File.read('files/people.json')
     file_data = JSON.parse(file)
@@ -33,17 +33,17 @@ module Load
     end
     new_arr
   end
-  
+
   def load_rentals
     return [] if File.exist?('files/rentals.json') == false
-  
+
     new_arr = []
     file = File.read('files/rentals.json')
     file_data = JSON.parse(file)
     file_data.each do |rental|
       date = rental['date']
       book = Book.new(rental['book']['title'], rental['book']['author'])
-  
+
       p = rental['person']
       person = case p['class']
                when 'Student'
@@ -51,7 +51,7 @@ module Load
                else
                  Teacher.new(p['name'], p['age'], p['specialization'], p['id'])
                end
-  
+
       new_arr << Rental.new(date, book, person)
     end
     new_arr
