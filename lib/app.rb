@@ -4,17 +4,19 @@ require_relative 'book'
 require_relative 'rental'
 require_relative 'modules/user_data'
 require_relative 'modules/save'
+require_relative 'modules/load_data'
 
 class App
   include User
   include Save
+  include Load
 
   attr_accessor :books, :people
 
   def initialize
-    @books = []
-    @people = []
-    @rentals = []
+    @books = load_books
+    @people = load_people
+    @rentals = load_rentals
   end
 
   def list_books(rent: false)
@@ -49,14 +51,14 @@ class App
       name = name()
       permission = permission()
 
-      student = Student.new(age, nil, name, parent_permission: permission)
+      student = Student.new(age, nil, name, nil, parent_permission: permission)
       @people.push(student)
     elsif person == '2' # create teacher
       age = age()
       name = name()
       specialization = specialization()
 
-      teacher = Teacher.new(age, specialization, name)
+      teacher = Teacher.new(age, specialization, name, nil)
       @people.push(teacher)
     else
       puts 'You need to select an actual number'
@@ -103,7 +105,7 @@ class App
     print 'ID of person: '
     id = gets.chomp.to_i
 
-    @people.each do |person|
+    @people.each_with_index do |person, index|
       if person.id == id
         puts 'Rentals: '
         person.rentals.each do |rental|
@@ -112,8 +114,10 @@ class App
           result += "by #{rental.rented.author.capitalize}"
           puts result
         end
-      else
-        'No person with that ID!'
+      elsif person.id != id && index == @people.length - 1
+        puts '|---------OOPS!-----------|'
+        puts '  No person with that ID!  '
+        puts '|-------Try Again!--------|'
       end
     end
   end
